@@ -4,12 +4,12 @@ import NavBar from "./nav/NavBar";
 
 function App() {
   return (
-    <div>
+    <>
       <NavBar />
       <Container className='main'>
         <EventDashboard />
       </Container>
-    </div>
+    </>
   );
 }
 
