@@ -4,6 +4,10 @@ Neil Cummings course - [Learn how to build a web app with React, Redux and Fires
 
 ## How to install and run this app
 
-git clone it && cd into the folder
-$npm i //to install the node modules
-$npm run dev //to get it running on your local machine
+Git clone it, cd into the folder.
+To install and run the app, type the following in the terminal:
+
+```console
+$npm i
+$npm run dev
+```
