@@ -8,9 +8,14 @@ import {
   SegmentGroup,
 } from "semantic-ui-react";
 import EventListAttendee from "./EventListAttendee";
+import { AppEvent } from "../../../app/types/event";
+
+type Props = {
+  event: AppEvent;
+};
 
 // destructuring the props object data
-export default function EventListItem({ event }: any) {
+export default function EventListItem({ event }: Props) {
   return (
     <SegmentGroup>
       <Segment>

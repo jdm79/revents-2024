@@ -1,6 +1,11 @@
 import { Image, List } from "semantic-ui-react";
+import { Attendee } from "../../../app/types/event";
 
-export default function EventListAttendee({ attendee }: any) {
+type Props = {
+  attendee: Attendee;
+};
+
+export default function EventListAttendee({ attendee }: Props) {
   return (
     <List.Item>
       <Image src={attendee.photoURL} size='mini' circular></Image>
