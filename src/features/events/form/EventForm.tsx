@@ -27,6 +27,7 @@ export default function EventForm({ setFormOpen, addEvent }: Props) {
       attendees: [],
       hostPhotoURL: "",
     });
+    setFormOpen(false);
   }
 
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
