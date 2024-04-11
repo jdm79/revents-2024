@@ -13,11 +13,18 @@ type Props = {
 
 export default function EventDashboard({ formOpen, setFormOpen }: Props) {
   const [events, setEvents] = useState<AppEvent[]>([]);
+
   // using an empty dependencies array makes sure this is run only once
   // this useEffect hook is like componentDidMount etc from the old days
   useEffect(() => {
     setEvents(sampleData);
   }, []);
+
+  function addEvent(event: AppEvent) {
+    setEvents((prevState) => {
+      return [...prevState, event];
+    });
+  }
 
   return (
     <Grid>
@@ -25,7 +32,9 @@ export default function EventDashboard({ formOpen, setFormOpen }: Props) {
         <EventList events={events} />
       </Grid.Column>
       <Grid.Column width={6}>
-        {formOpen && <EventForm setFormOpen={setFormOpen} />}
+        {formOpen && (
+          <EventForm setFormOpen={setFormOpen} addEvent={addEvent} />
+        )}
       </Grid.Column>
     </Grid>
   );
