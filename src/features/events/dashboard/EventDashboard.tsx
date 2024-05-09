@@ -9,9 +9,16 @@ import { sampleData } from "../../../app/api/sampleData";
 type Props = {
   formOpen: boolean;
   setFormOpen: (value: boolean) => void;
+  selectEvent: (event: AppEvent) => void;
+  selectedEvent: AppEvent | null;
 };
 
-export default function EventDashboard({ formOpen, setFormOpen }: Props) {
+export default function EventDashboard({
+  formOpen,
+  setFormOpen,
+  selectEvent,
+  selectedEvent,
+}: Props) {
   const [events, setEvents] = useState<AppEvent[]>([]);
 
   // using an empty dependencies array makes sure this is run only once
@@ -29,11 +36,16 @@ export default function EventDashboard({ formOpen, setFormOpen }: Props) {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventList events={events} />
+        <EventList events={events} selectEvent={selectEvent} />
       </Grid.Column>
       <Grid.Column width={6}>
         {formOpen && (
-          <EventForm setFormOpen={setFormOpen} addEvent={addEvent} />
+          <EventForm
+            setFormOpen={setFormOpen}
+            addEvent={addEvent}
+            selectedEvent={selectedEvent}
+            key={selectedEvent ? selectedEvent.id : "create"}
+          />
         )}
       </Grid.Column>
     </Grid>
