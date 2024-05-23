@@ -21,7 +21,7 @@ export default function HomePage() {
           />
           Revents
         </Header>
-        <Button size='huge' inverted as={Link}>
+        <Button size='huge' inverted as={Link} to={"/events"}>
           Get Started <Icon name='caret right' inverted />{" "}
         </Button>
       </Container>
