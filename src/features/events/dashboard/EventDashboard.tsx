@@ -1,17 +1,9 @@
 import { Grid } from "semantic-ui-react";
 import EventList from "./EventList";
-import { useEffect, useState } from "react";
-import { AppEvent } from "../../../app/types/event";
-import { sampleData } from "../../../app/api/sampleData";
+import { useAppSelector } from "../../../app/store/store";
 
 export default function EventDashboard() {
-  const [events, setEvents] = useState<AppEvent[]>([]);
-
-  // using an empty dependencies array makes sure this is run only once
-  // this useEffect hook is like componentDidMount etc from the old days
-  useEffect(() => {
-    setEvents(sampleData);
-  }, []);
+  const { events } = useAppSelector((state) => state.events);
 
   return (
     <Grid>
