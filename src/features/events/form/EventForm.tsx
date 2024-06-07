@@ -15,20 +15,36 @@ import {
 } from "firebase/firestore";
 import { db } from "../../../app/config/firebase";
 import { toast } from "react-toastify";
+import { useFireStore } from "../../../app/hooks/firestore/useFirestore";
+import { useEffect } from "react";
+import { actions } from "../eventSlice";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 export default function EventForm() {
+  const { loadDocument } = useFireStore("events");
   const {
     register,
     handleSubmit,
     control,
     setValue,
     formState: { errors, isValid, isSubmitting },
-  } = useForm({ mode: "onTouched" });
+  } = useForm({
+    mode: "onTouched",
+    defaultValues: async () => {
+      if (event) return { ...event, date: new Date(event.date) };
+    },
+  });
   const { id } = useParams();
   const event = useAppSelector((state) =>
-    state.events.events.find((e) => e.id === id)
+    state.events.data.find((e) => e.id === id)
   );
+  const { status } = useAppSelector((state) => state.events);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!id) return;
+    loadDocument(id, actions);
+  }, [id, loadDocument]);
 
   async function updateEvent(data: AppEvent) {
     if (!event) return;
@@ -66,6 +82,8 @@ export default function EventForm() {
     }
   }
 
+  if (status === "loading") return <LoadingComponent />;
+
   return (
     <Segment clearing>
       <Header content='Event details' sub color='teal' />
@@ -98,7 +116,9 @@ export default function EventForm() {
         <Form.TextArea
           placeholder='Description'
           defaultValue={event?.description || ""}
-          {...register("description", { required: "Description is required" })}
+          {...register("description", {
+            required: "Description is required",
+          })}
           error={errors.description && errors.description.message}
         />
 
