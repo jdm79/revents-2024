@@ -6,14 +6,7 @@ import { categoryOptions } from "./categoryOptions";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { AppEvent } from "../../../app/types/event";
-import {
-  collection,
-  doc,
-  setDoc,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "../../../app/config/firebase";
+import { Timestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useFireStore } from "../../../app/hooks/firestore/useFirestore";
 import { useEffect } from "react";
@@ -21,7 +14,7 @@ import { actions } from "../eventSlice";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 export default function EventForm() {
-  const { loadDocument } = useFireStore("events");
+  const { loadDocument, create, update, remove } = useFireStore("events");
   const {
     register,
     handleSubmit,
@@ -48,25 +41,31 @@ export default function EventForm() {
 
   async function updateEvent(data: AppEvent) {
     if (!event) return;
-    const docRef = doc(db, "events", event.id);
-    await updateDoc(docRef, {
+    await update(data.id, {
       ...data,
       date: Timestamp.fromDate(data.date as unknown as Date),
     });
   }
 
   async function createEvent(data: FieldValues) {
-    const newEventRef = doc(collection(db, "events"));
-    await setDoc(newEventRef, {
+    const ref = await create({
       ...data,
       hostedBy: "Bob",
       attendees: [],
       hostPhotoUrl: "",
       date: Timestamp.fromDate(data.date as unknown as Date),
     });
-    return newEventRef;
+    return ref;
   }
 
+  async function handleCancelToggle(event: AppEvent) {
+    await update(event.id, {
+      isCancelled: !event.isCancelled,
+    });
+    toast.success(
+      `Event has been ${event.isCancelled ? "uncancelled" : "cancelled"}.`
+    );
+  }
   async function onSubmit(data: FieldValues) {
     try {
       if (event) {
@@ -74,7 +73,7 @@ export default function EventForm() {
         navigate(`/events/${event.id}`);
       } else {
         const ref = await createEvent(data);
-        navigate(`/events/${ref.id}`);
+        navigate(`/events/${ref?.id}`);
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -157,6 +156,16 @@ export default function EventForm() {
             )}
           />
         </Form.Field>
+
+        {event && (
+          <Button
+            type='button'
+            floated='left'
+            color={event.isCancelled ? "green" : "red"}
+            content={event.isCancelled ? "Reactivate event" : "Cancel event"}
+            onClick={() => handleCancelToggle(event)}
+          />
+        )}
 
         <Button
           loading={isSubmitting}

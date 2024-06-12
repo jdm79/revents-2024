@@ -1,15 +1,24 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAppDispatch } from "../../store/store";
 import { GenericActions } from "../../store/genericSlice";
-import { collection, doc, DocumentData, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../config/firebase";
+import { toast } from "react-toastify";
 
 type ListenerState = {
   name: string;
   unsubscribe: () => void;
 };
 
-export const useFireStore = <T>(path: string) => {
+export const useFireStore = <T extends DocumentData>(path: string) => {
   const listenersRef = useRef<ListenerState[]>([]);
 
   useEffect(() => {
@@ -82,5 +91,35 @@ export const useFireStore = <T>(path: string) => {
     [dispatch, path]
   );
 
-  return { loadCollection, loadDocument };
+  const create = async (data: T) => {
+    try {
+      const ref = doc(collection(db, path));
+      await setDoc(ref, data);
+      return ref;
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const update = async (id: string, data: T) => {
+    const docRef = doc(db, path, id);
+    try {
+      return await updateDoc(docRef, data);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const remove = async (id: string) => {
+    try {
+      return await deleteDoc(doc(db, path, id));
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  return { loadCollection, loadDocument, create, update, remove };
 };
