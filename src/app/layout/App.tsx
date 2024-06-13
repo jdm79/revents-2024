@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useAppDispatch } from "../store/store";
 import { auth } from "../config/firebase";
-import { signIn } from "../../features/auth/authSlice";
+import { logOut, signIn } from "../../features/auth/authSlice";
 
 function App() {
   const location = useLocation();
@@ -18,6 +18,8 @@ function App() {
       next: (user) => {
         if (user) {
           dispatch(signIn(user));
+        } else {
+          dispatch(logOut());
         }
       },
       error: (error) => console.log(error),

@@ -17,11 +17,7 @@ export default function LoginForm() {
 
   async function onSubmit(data: FieldValues) {
     try {
-      const result = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
+      await signInWithEmailAndPassword(auth, data.email, data.password);
       dispatch(closeModal());
     } catch (error) {
       console.log(error);
