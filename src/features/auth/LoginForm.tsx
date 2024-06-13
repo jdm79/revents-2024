@@ -3,7 +3,8 @@ import ModalWrapper from "../../app/common/modals/ModalWrapper";
 import { FieldValues, useForm } from "react-hook-form";
 import { useAppDispatch } from "../../app/store/store";
 import { closeModal } from "../../app/common/modals/modalSlice";
-import { signIn } from "./authSlice";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../app/config/firebase";
 
 export default function LoginForm() {
   const {
@@ -14,9 +15,17 @@ export default function LoginForm() {
 
   const dispatch = useAppDispatch();
 
-  function onSubmit(data: FieldValues) {
-    dispatch(signIn(data));
-    dispatch(closeModal());
+  async function onSubmit(data: FieldValues) {
+    try {
+      const result = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      dispatch(closeModal());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
